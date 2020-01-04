@@ -142,7 +142,7 @@ export default class Orders extends React.Component{
           <Button onClick={this.onLoadMore}>loading more</Button>
         </div>
       ) : null;
-        if (list === []) { console.log("leeeeeeeeeeeee")
+        if (list === [] || list === null) { 
         return (<div></div>)}
         else return(
             <List

@@ -9,13 +9,13 @@ class UserMenu extends React.Component{
         else return (<Link to='/notification'/>);
     }
     render(){
-        const {picture, name, activeKey} = this.props;
+        const {avatar, fullName, activeKey} = this.props;
         console.log(activeKey)
         return(
             <div>
                 <div className="usermenu-user">
-                <Avatar shape='square' size={100} src={picture} />
-                <b style={{fontSize:"18px", color:"black"}}>{name}</b>
+                <Avatar shape='square' size={100} src={avatar} />
+                <b style={{fontSize:"18px", color:"black"}}>{fullName}</b>
                 </div>
             
             <Menu
