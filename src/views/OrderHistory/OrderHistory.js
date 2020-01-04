@@ -12,10 +12,9 @@ const { Content, Sider } = Layout;
 
 export default class OrderHistory extends React.Component{
     render(){
-      const {role} = this.props;
-       // const {getUser, email, picture, name, role} = this.props;
-        //if (localStorage.getItem("usertoken") !== null && email === null)  { console.log("Thy");getUser();}
-       // if (localStorage.getItem("usertoken")=== null) return <Redirect to='/login'/>
+        const {getUser, username, role} = this.props;
+        if (localStorage.getItem("usertoken") !== null && username === null)  { console.log("Thy");getUser();}
+        if (localStorage.getItem("usertoken")=== null) return <Redirect to='/login'/>
         return(            
             <Layout className="layout">
             <Header brand="Thy Boutique"

@@ -93,3 +93,31 @@ export function callApiUpdateUser(data){
     url: `https://cors-anywhere.herokuapp.com/${api_url}/user`
   })
 }
+export function callApiChangePassword(data){
+  return axios({
+    method: 'PUT',
+    mode: "cors",
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `${localStorage.getItem('usertoken')}`
+    },
+    data: data,
+    url: `https://cors-anywhere.herokuapp.com/${api_url}/user`
+  })
+}
+export function callApiUpdateOrder(data) {
+  var temp={
+    shipper: data.shipper,
+    status: data.status
+  }
+  return axios({
+    method: 'PUT',
+    mode: "cors",
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `${localStorage.getItem('usertoken')}`
+    },
+    data: temp,
+    url: `https://cors-anywhere.herokuapp.com/${api_url}/order?id=${data.id.id}`
+  });
+}

@@ -1,5 +1,5 @@
 import React from "react";
-import Orders from './Orders';
+import Orders from '../../../containers/Order';
 import {Tabs} from 'antd';
 import { StickyContainer, Sticky } from 'react-sticky';
 const { TabPane } = Tabs;
@@ -29,7 +29,7 @@ export default class OrderList extends React.Component{
       <Orders role={role} key="3" tab="DELIVERED"/>
       </TabPane>
       <TabPane tab="Đã hủy" key="4">
-      <Orders role={role} key="4" tab="CANCELED"/>
+      <Orders role={role} key="4" tab="CANCEL"/>
       </TabPane>
     </Tabs>
   </StickyContainer>

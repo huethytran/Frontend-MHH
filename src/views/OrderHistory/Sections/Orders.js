@@ -47,47 +47,53 @@ export default class Orders extends React.Component{
         data={
           id: id,
           status: "DELIVERING",
-          username:username
+          shipper:username
         }
         else if (status === "Hủy đơn hàng")
         data={
           id: id,
-          status: "CANCELED"
+          status: "CANCEL"
         }
         else if (status==="Xác nhận đã giao")
         data={
           id: id,
           status: "DELIVERED"
         }
-       /* callApi.callApiUpdateOrder(data).then(temp=>{
-          console.log(temp);
+        callApi.callApiUpdateOrder(data).then(temp=>{
+          this.getData(res => {
+            this.setState({
+              initLoading: false,
+              data: res,
+              list: res
+            });
+          });
         }).catch(err=>{
           console.log(err);
-        })*/
+        })
       }
       actions=(item)=>{
           const {tab, role} = this.props;
-          console.log(item)
-          if (tab === "Đang xử lí" && role === "SHIPPER")
+          console.log(role)
+          if (tab === "ORDERED" && role === "SHIPPER")
             return [<Button size="default" style={{backgroundColor:"#4BB543", marginLeft:"13px", color: "white"}} onClick={()=>this.handleUpdateOrder(item, "Nhận đơn hàng")}><IconText  type="check" text="Nhận đơn hàng" key="accept" /></Button>,
             <Button type="primary" onClick={()=>this.handleViewDetailOrder(item)}><IconText  type="eye" text="Xem chi tiết" key="view1" /></Button>]
-            if (tab === "Đang xử lí" && role === "CUSTOMER")
+            if (tab === "ORDERED" && role === "CUSTOMER")
             return [<Button type="danger" style={{marginLeft: "13px"}} onClick={()=>this.handleUpdateOrder(item, "Hủy đơn hàng")}><IconText  type="close" text="Hủy đơn hàng" key="cancel" /></Button>,
             <Button type="primary"onClick={()=>this.handleViewDetailOrder(item)}><IconText  type="eye" text="Xem chi tiết" key="view2" /></Button>]
-            if (tab === "Đang giao" && role === "SHIPPER")
+            if (tab === "DELIVERING" && role === "SHIPPER")
             return [<Button type="danger" style={{marginLeft: "13px"}} onClick={()=>this.handleUpdateOrder(item, "Hủy đơn hàng")}><IconText  type="close" text="Hủy đơn hàng" key="cancel" /></Button>,
             <Button  style={{backgroundColor:"#4BB543", color: "white"}} onClick={()=>this.handleUpdateOrder(item, "Xác nhận đã giao")}><IconText  type="check" text="Xác nhận đã giao" key="finished" /></Button>,
             <Button type="default" onClick={()=>this.handleUpdateDeliveryDate(item)}><IconText text="Dự kiến ngày giao tới" key="deliveryDate" /></Button>,
             <Button type="primary"  onClick={()=>this.handleViewDetailOrder(item)}><IconText  type="eye" text="Xem chi tiết" key="view3" /></Button>
             ]
-            if (tab === "Đang giao" && role === "CUSTOMER")
+            if (tab === "DELIVERING" && role === "CUSTOMER")
               return [ <Button type="primary" style={{marginLeft: "13px"}} onClick={()=>this.handleViewDetailOrder(item)}><IconText  type="eye" text="Xem chi tiết" key="view4" /></Button>]
-            if (tab === "Đã giao" && role === "SHIPPER")
+            if (tab === "DELIVERED" && role === "SHIPPER")
             return [ <Button type="primary" style={{marginLeft: "13px"}} onClick={()=>this.handleViewDetailOrder(item)}><IconText  type="eye" text="Xem chi tiết" key="view5" /></Button>]
-            if (tab === "Đã giao" && role === "CUSTOMER" && item.isRate === false)
+            if (tab === "DELIVERED" && role === "CUSTOMER" && item.isRate === false)
               return [ <Button type="default" style={{marginLeft: "13px"}} onClick={()=>this.handleRateItem(item)}><IconText  text="Đánh giá" key="rate" /></Button>,
             <Button type="primary" onClick={()=>this.handleViewDetailOrder(item)}><IconText  type="eye" text="Xem chi tiết" key="view6" /></Button>]
-            if (tab === "Đã hủy")
+            if (tab === "CANCEL")
             return [ <Button type="primary" style={{marginLeft: "13px"}} onClick={()=>this.handleViewDetailOrder(item)}><IconText  type="eye" text="Xem chi tiết" key="view5" /></Button>]
           }
       onLoadMore = () => {

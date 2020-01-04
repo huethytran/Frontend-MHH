@@ -1,7 +1,7 @@
 import React from "react";
 import {withRouter, Redirect} from "react-router-dom";
 import {Button, Form, Input, message} from 'antd';
-//import * as callApi from '../../../utils/apiCaller';
+import * as callApi from '../../../utils/apiCaller';
 class ChangePassword extends React.Component{
     state={
         loading: false,
@@ -46,10 +46,9 @@ class ChangePassword extends React.Component{
         e.preventDefault();
           const {logout} = this.props;
         var data = {
-            currentPassword : document.getElementById('currentpassword').value,
-            newPassword: document.getElementById('newpassword').value
+            password: document.getElementById('newpassword').value
         }
-        /* callApi.callApiChangePassword(data)
+         callApi.callApiChangePassword(data)
        .then(() => {
          message.success("Change password successfully!");
          this.props.form.setFieldsValue({
@@ -68,7 +67,7 @@ class ChangePassword extends React.Component{
          this.setState({loading: false});
          message.error(err.response.data.message? err.response.data.message:"Change password failed.");
            }
-       });*/
+       });
       }
     render(){
         const {loading, isChange} = this.state;
