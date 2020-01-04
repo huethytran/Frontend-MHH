@@ -106,8 +106,13 @@ export function callApiChangePassword(data){
   })
 }
 export function callApiUpdateOrder(data) {
-  var temp={
+  var temp;
+  if (data.shipper !== null)
+  temp={
     shipper: data.shipper,
+    status: data.status
+  }
+  else temp={
     status: data.status
   }
   return axios({

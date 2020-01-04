@@ -52,12 +52,14 @@ export default class Orders extends React.Component{
         else if (status === "Hủy đơn hàng")
         data={
           id: id,
-          status: "CANCEL"
+          status: "CANCEL",
+          shipper: null
         }
         else if (status==="Xác nhận đã giao")
         data={
           id: id,
-          status: "DELIVERED"
+          status: "DELIVERED",
+          shipper: null
         }
         callApi.callApiUpdateOrder(data).then(temp=>{
           this.getData(res => {
@@ -145,7 +147,6 @@ export default class Orders extends React.Component{
             lineHeight: '32px',
           }}
         >
-          <Button onClick={this.onLoadMore}>loading more</Button>
         </div>
       ) : null;
         if (list === [] || list === null) { 
