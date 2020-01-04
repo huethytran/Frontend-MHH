@@ -23,6 +23,7 @@ import BestSellers from "./Sections/BestSellers";
 const useStyles = makeStyles(styles);
 
 export default function HomePage(props) {
+  
   const classes = useStyles();
   const { ...rest } = props;
   return (

@@ -5,45 +5,77 @@ import Input from '@material-ui/core/Input';
 import Rating from '@material-ui/lab/Rating';
 import Button from "components/CustomButtons/Button.js";
 import SameProducts from "./SameProducts";
+import * as callApi from "../../../utils/apiCaller";
+import {notification} from 'antd';
+const openNotificationWithIcon = (type, text, title) => {
+  notification[type]({
+    message: title,
+    description: text,
+    style: {
+      marginTop: 100,
+    },
+  });
+};
 export default class ProductDetails extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-         name: "ĐẦM ĐẮP CHÉO XẾP TÙNG BÈO HÔNG",
-         price: 100000,
-         discount: 20,
-         size: ["S","M","L"],
-          color: ["black","yellow","orange"],
-          description: "Miêu tả: Khoác kiểu tay dài túi hộp.\nSize: S/M/L.\nĐặc tính: Thanh lịch – sang trọng.\nThể loại: Trang phục tiệc.\nMàu sắc: Đỏ - Đen.\nChất liệu: Bố caro kim tuyến.",
-          img:["https://product.hstatic.net/200000000131/product/nau-1_ff1565610f5b42c2bf95897dd464c120_master.jpg",
-        "https://product.hstatic.net/200000000131/product/nau-2_88c9b0c5a7f4455899faa4c36f94e617_master.jpg",
-      "https://product.hstatic.net/200000000131/product/nau-3_aa0fc7b1bb2e4118b4739041a219c819_master.jpg",
-    "https://product.hstatic.net/200000000131/product/xanh-reu-1_3c444110dcc24767b9b26876b11b3c40_master.jpg",
-  "https://product.hstatic.net/200000000131/product/xanh-reu-2_f260043db9414849b1be3eacc6585087_master.jpg",
-"https://product.hstatic.net/200000000131/product/xanh-reu-4_d4cc971c0add474a839a7c4599725d29_master.jpg"],
-          material: "Plastic",
-          sold: 12,
-          rate: 4.5,
-          choosingColor: "black",
-          choosingSize: "S",
-          quantity: 10
+          product: {
+          name: null,
+            price: 0,
+            discount: 0,
+            description: null,
+            quantity: 0,
+            imageArray: [],
+            size: [],
+            colorName: [],
+            colorCode: [],
+            material: null,
+            rate: 0,
+            categoryName: null,
+            selledAmount: 0,
+            imageUrl: null
+          },
+          choosingColor: null,
+          choosingSize: null
         };
     }
+    componentWillMount(){
+      const {id} = this.props;
+      console.log("willmounttttt")
+      callApi.callApiGetProduct(id).then(data=>{
+        this.setState({product: data.data.data})
+      }).catch(err=>{
+        console.log(err);
+      })
+    }
+    componentDidUpdate(prevProps){
+      const {id} = this.props;
+      if (prevProps.id !== id){
+        console.log("ooooo", id)
+        callApi.callApiGetProduct(id).then(data=>{
+          console.log(data);
+         
+          this.setState({product: data.data.data})
+        }).catch(err=>{
+          console.log(err);
+        })
+      }
+    }
     handleChangeColor=(e)=>{
-      const {quantity} = this.state;
-      this.setState({choosingColor: e.target.value, quantity: quantity + 1});
+      this.setState({choosingColor: e.target.value});
     }
     handleChangeSize=(e)=>{
-      const {quantity} = this.state;
-      this.setState({choosingSize: e.target.value, quantity: quantity + 1});
+      this.setState({choosingSize: e.target.value});
     }
     carousel = () =>{
       var kq = [];
-      const {img} = this.state;
-      for (let i =0;i<img.length;i+=1)
+     const {imageArray, name} = this.state.product;
+     console.log("Huhuhuhu", imageArray, name)
+      for (let i =0;i<imageArray.length;i+=1)
       {
         kq.push(<div>
-          <img src={img[i]} />
+          <img src={imageArray[i]} />
         </div>)
       }
       return kq;
@@ -60,8 +92,25 @@ export default class ProductDetails extends React.Component{
       }
       return pricestring;
   }
+  addToCart=()=>{
+    const {addCart, id} = this.props;
+    const {product, choosingColor, choosingSize} = this.state;
+    var cart ={
+      name: product.name,
+      amount: parseInt(document.getElementById("amount").value),
+      price: product.price,
+      colorName: choosingColor,
+      size: choosingSize,
+      imageUrl: product.imageUrl,
+      discount: product.discount
+    }
+    if (cart.colorName === null) openNotificationWithIcon("warning", "Xin hãy chọn màu sản phẩm","Chưa chọn màu");
+    else if (cart.size === null) openNotificationWithIcon("warning","Xin hãy chọn kích cỡ của sản phẩm", "Chưa chọn kích cỡ");
+    else if (cart.amount === 0) openNotificationWithIcon("warning", "Xin hãy chọn số lượng sản phẩm cần thêm vào giỏ hàng", "Chưa chọn số lượng");
+    else { addCart(cart); openNotificationWithIcon("success", "Thêm vào giỏ hàng thành công!", "Đã thêm");}
+  }
   isDiscount = ()=>{
-      const {discount} = this.state;
+      const {discount} = this.state.product;
       if (discount !== 0 )
           return (<div style={{position:"absolute", width:"65px", height:"20px", color:"red", backgroundColor: "yellow",fontWeight:"600", textAlign:"center"}}>
           -{discount}%
@@ -69,24 +118,24 @@ export default class ProductDetails extends React.Component{
       else return(<div></div>);
   }
   isDiscountPrice = () =>{
-      const {discount, price} = this.state;
+      const {discount, price} = this.state.product;
       if (discount !== 0 )
-          return (<div className="price" style={{display: "flex", marginLeft:"10%"}}>
-              <div>{this.changePriceNumToPriceString(price*((100-discount)/100))}đ</div>&nbsp;&nbsp;&nbsp;
-             <i> <del style={{color: "grey", fontSize:"14px"}}>{this.changePriceNumToPriceString(price)}đ</del></i>
+          return (<div className="price" style={{display: "flex", marginLeft:"10%", fontWeight: "bold",fontSize:"17px"}}>
+              <div>{this.changePriceNumToPriceString(parseInt(price*((100-discount)/100)))}đ</div>&nbsp;&nbsp;&nbsp;
+             <i> <del style={{color: "grey", fontSize:"15px"}}>{this.changePriceNumToPriceString(price)}đ</del></i>
       </div>);
-      else return(<div className="price" style={{color: "black"}}>{this.changePriceNumToPriceString(price)}đ</div>);
+      else return(<div style={{color: "black", fontWeight:"bold", fontSize:"17px"}}>{this.changePriceNumToPriceString(price)}đ</div>);
   }
   color = () =>{
     var kq = [];
-    const {color} = this.state;
+    const {colorCode, colorName} = this.state.product;
     var kq1 = [];
     
-    for (let i =0;i<color.length; i+=1)
+    for (let i =0;i<colorCode.length; i+=1)
     {
-      kq.push(<div className="color"><input className="color" id={100-i} type="radio" value={color[i]} name="radio-2" onChange={this.handleChangeColor}/><label id={`c${1998-i}`} className="color"  for={100-i}></label></div>);
+      kq.push(<div className="color"><input className="color" id={100-i} type="radio" value={colorName[i]} name="radio-2" onChange={this.handleChangeColor}/><label id={`c${1998-i}`} className="color"  for={100-i}></label></div>);
       let sheet = new CSSStyleSheet();
-      sheet.replaceSync(`#c${1998-i}::before, #c${1998-i}::after  {background-color: ${color[i]}}`);
+      sheet.replaceSync(`#c${1998-i}::before, #c${1998-i}::after  {background-color: ${colorCode[i]}}`);
       kq1.push(sheet);
     }
 document.adoptedStyleSheets = kq1;
@@ -94,7 +143,7 @@ document.adoptedStyleSheets = kq1;
   }
   size = () =>{
     var kq = [];
-    const {size} = this.state;
+    const {size} = this.state.product;
     for (let i =0;i<size.length; i+=1)
     {
       kq.push(<div style={{marginRight: "4%"}}> <input className="size" type="radio" name="radio1" id={i} value={size[i]} style={{display: "none"}} onChange={this.handleChangeSize}/><label className="size" for={i}>{size[i]}</label></div>)
@@ -104,7 +153,7 @@ document.adoptedStyleSheets = kq1;
 
     render() {
         const {id} = this.props;
-        const {name, description,material, sold, rate, quantity}=this.state;
+        const {name, description,material, selledAmount, rate, quantity, categoryName}=this.state.product;
         return (
             <div style={{display:"block", padding: "20px 40px", backgroundColor:"white"}}>
             <div style={{display: "flex" }}>
@@ -116,7 +165,7 @@ document.adoptedStyleSheets = kq1;
   <div style={{width:"100%", marginLeft:"5%"}}>
      <h3 style={{fontWeight: "600"}}>{name}</h3>
    <p><span style={{color:"grey", marginRight:"60px"}}>MÃ SP: {id}</span><sup><ins style={{color:"orange", fontWeight:"bold", marginRight:"10px", fontSize:"18px"}}>{rate}</ins></sup><Rating name="read-only" value={rate} readOnly precision={0.5} /></p>  
-     <div style={{marginTop:"20px", display:"flex"}}><div style={{marginRight: "70px"}} >{this.isDiscount()}</div><div>{this.isDiscountPrice()}</div><div style={{color:"grey", marginLeft:"40px"}}>Đã bán {sold} sản phẩm.</div></div><hr/>
+     <div style={{marginTop:"20px", display:"flex"}}><div style={{marginRight: "70px"}} >{this.isDiscount()}</div><div>{this.isDiscountPrice()}</div><div style={{color:"grey", marginLeft:"40px"}}>Đã bán {selledAmount} sản phẩm.</div></div><hr/>
     <p><span style={{fontSize:"12px", fontWeight:"bold", marginRight:"10px"}}>CHẤT LIỆU:</span>{material}</p> 
     <p> <p style={{fontSize:"12px", fontWeight:"bold", marginRight:"30px"}}>MÔ TẢ SẢN PHẨM:</p>{description}</p><hr/>
      <p style={{fontSize:"12px", fontWeight:"bold"}}>MÀU SẮC</p>
@@ -126,12 +175,12 @@ document.adoptedStyleSheets = kq1;
               {this.size()}</form><hr/>
             <p style={{fontSize:"12px"}}>Hiện tại còn {quantity} sản phẩm.</p>
             <Input id="amount" type="number"  inputProps={ { min: 0, max: quantity }} defaultValue={0} />
-          <Button style={{width:"100%", backgroundColor:"black", marginTop:"50px"}}>THÊM VÀO GIỎ</Button>
+          <Button style={{width:"100%", backgroundColor:"black", marginTop:"50px"}} onClick={this.addToCart}>THÊM VÀO GIỎ</Button>
   </div>
   </div>
   <div style={{width: "100%", marginTop:"50px"}}>
           <h2 style={{textAlign:"center", fontSize:"bold"}}>SẢN PHẨM LIÊN QUAN</h2>
-          <SameProducts/>
+          {categoryName !== null? <SameProducts category={categoryName} id={id}/>: null}
   </div>
   </div>
         );

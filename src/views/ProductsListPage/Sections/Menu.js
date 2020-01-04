@@ -1,4 +1,5 @@
 import React from "react";
+import {Link, withRouter} from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -10,7 +11,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ListCategories from '../../../containers/ListCategories';
-export default class Menu extends React.Component{
+export class Menu extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -18,6 +19,7 @@ export default class Menu extends React.Component{
           price: "all"
         };
       }
+      
     useStyles =() =>{
         return makeStyles(theme => ({
         root: {
@@ -37,6 +39,11 @@ export default class Menu extends React.Component{
       handlePriceChange = event =>{
         this.setState({price: event.target.value});
     }
+    componentDidUpdate(prevProps, prevState, snapshot){
+      const {sortedBy} = this.state;
+      const {category, history} = this.props;
+      if (prevState.sortedBy !== sortedBy) history.push(`/productslist/${category}/${sortedBy}`);
+    }
     render(){
         const classes = this.useStyles();
         const {sortedBy, price} = this.state;
@@ -52,7 +59,7 @@ export default class Menu extends React.Component{
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <Typography>
-         <ListCategories/>
+         <ListCategories sortedBy={sortedBy}/>
           </Typography>
         </ExpansionPanelDetails>
       </ExpansionPanel>
@@ -103,3 +110,4 @@ export default class Menu extends React.Component{
         )
     }
 } 
+export default withRouter(Menu);

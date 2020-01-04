@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "components/Header/Header.js";
 import HeaderLinks from "components/Header/HeaderLinks.js";
-import ProductDetails from "./Sections/ProductDetails";
+import ProductDetails from "../../containers/ProductDetail";
 import Comments from "./Sections/Comments";
 import Footer from "components/Footer/Footer.js";
 

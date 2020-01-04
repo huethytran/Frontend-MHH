@@ -1,10 +1,10 @@
 import React from "react";
-// @material-ui/core components
+import {Link, Redirect} from "react-router-dom";
+// @material-ui/core compone
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
-import Email from "@material-ui/icons/Email";
 import People from "@material-ui/icons/People";
 // core components
 import Header from "components/Header/Header.js";
@@ -18,21 +18,64 @@ import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardFooter from "components/Card/CardFooter.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
-
+//import * as mhh from "https://www.getpostman.com/collections/80490e3c164ac9983eee";
 import styles from "assets/jss/material-kit-react/views/loginPage.js";
-
+import { useDispatch, useSelector} from "react-redux";
+import * as callApi from "../../utils/apiCaller";
 import image from "assets/img/bg7.jpg";
+import { types } from '../../core/constants';
 
 const useStyles = makeStyles(styles);
 
-export default function LoginPage(props) {
+export default function RegisterPage(props) {
   const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
+  const dispatch = useDispatch();
+  const user = useSelector(state => state.user);
+  if (localStorage.getItem("usertoken")!== null && user.role === null) {
+    callApi.callApiGetUser().then((data)=>{
+      if (data.data.status !== "ERROR") {
+      var data1 = {
+        fullName: data.data.data.fullName,
+        userRole: data.data.data.userRole,
+        avatar: data.data.data.avatar,
+        username: data.data.data.username
+      }
+      dispatch({ type: types.LOGIN, data: data1 });
+      }
+    }).catch(err=>{
+      console.log(err);
+    })
+    
+  }
+  const handleClick=()=>{
+    const data ={
+      username: document.getElementById("username").value,
+      password: document.getElementById("password").value
+    }
+    callApi.callApiLogin(data).then(data=>{
+      if (data.data.status === "ERROR") document.getElementById("error").innerHTML = "Username hoặc password không đúng.";
+      else {
+        var data1 = {
+          fullName: data.data.data.fullName,
+          userRole: data.data.data.userRole,
+          avatar: data.data.data.avatar,
+          username: data.data.data.username
+        }
+        localStorage.setItem("usertoken", data.data.data.session);
+        dispatch({ type: types.LOGIN, data: data1 });
+         
+      }
+    }).catch(err=>{
+      console.log(err)
+    })
+  }
   setTimeout(function() {
     setCardAnimation("");
   }, 700);
   const classes = useStyles();
   const { ...rest } = props;
-  return (
+  if (localStorage.getItem("usertoken")!== null && user.role !== null) return(<Redirect to="/"/>)
+  else return (
     <div>
       <Header
         absolute
@@ -55,7 +98,7 @@ export default function LoginPage(props) {
               <Card className={classes[cardAnimaton]}>
                 <form className={classes.form}>
                   <CardHeader color="primary" className={classes.cardHeader}>
-                    <h4>Login</h4>
+                    <h4>Đăng nhập</h4>
                     <div className={classes.socialLine}>
                       <Button
                         justIcon
@@ -86,11 +129,12 @@ export default function LoginPage(props) {
                       </Button>
                     </div>
                   </CardHeader>
-                  <p className={classes.divider}>Or Be Classical</p>
+                  <p className={classes.divider}>Chưa có tài khoản?&nbsp; <Link to='/register'><b>Đăng ký ngay</b></Link></p>
                   <CardBody>
+                   <p id="error" style={{color:"red", fontWeight:"bold"}}></p>
                     <CustomInput
-                      labelText="First Name..."
-                      id="first"
+                      labelText="Username"
+                      id="username"
                       formControlProps={{
                         fullWidth: true
                       }}
@@ -104,23 +148,8 @@ export default function LoginPage(props) {
                       }}
                     />
                     <CustomInput
-                      labelText="Email..."
-                      id="email"
-                      formControlProps={{
-                        fullWidth: true
-                      }}
-                      inputProps={{
-                        type: "email",
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <Email className={classes.inputIconsColor} />
-                          </InputAdornment>
-                        )
-                      }}
-                    />
-                    <CustomInput
-                      labelText="Password"
-                      id="pass"
+                      labelText="Mật khẩu"
+                      id="password"
                       formControlProps={{
                         fullWidth: true
                       }}
@@ -136,10 +165,11 @@ export default function LoginPage(props) {
                         autoComplete: "off"
                       }}
                     />
+                    
                   </CardBody>
                   <CardFooter className={classes.cardFooter}>
-                    <Button simple color="primary" size="lg">
-                      Get started
+                    <Button simple color="primary" size="lg" onClick={handleClick}>
+                      Đăng nhập
                     </Button>
                   </CardFooter>
                 </form>

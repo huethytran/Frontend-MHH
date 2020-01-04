@@ -26,19 +26,19 @@ class Product extends React.Component{
         const {discount, price} = this.props;
         if (discount !== 0 )
             return (<div className="price" style={{display: "flex", marginLeft:"10%"}}>
-                <div>{this.changePriceNumToPriceString(price*((100-discount)/100))}đ</div>&nbsp;&nbsp;&nbsp;
+                <div>{this.changePriceNumToPriceString(parseInt(price*((100-discount)/100)))}đ</div>&nbsp;&nbsp;&nbsp;
                <i> <del style={{color: "grey", fontSize:"14px"}}>{this.changePriceNumToPriceString(price)}đ</del></i>
         </div>);
         else return(<div className="price" style={{color: "black"}}>{this.changePriceNumToPriceString(price)}đ</div>);
     }
     render() {
-        const {imgUrl, name, id} = this.props;
+        const {imageUrl, name, id} = this.props;
         return (
             <div className="product">
                 <Link to={`/productdetails/${id}`}>
                     <div style={{position: "relative"}}>
                         {this.isDiscount()}
-    <img src={imgUrl} alt="Product Image" width="280" height="300"/>
+    <img src={imageUrl} alt="Product Image" width="280" height="300"/>
     </div>
         <div class="productinfo">
             <div className="name">{name}</div>

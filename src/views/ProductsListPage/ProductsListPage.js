@@ -7,7 +7,7 @@ import Footer from "components/Footer/Footer.js";
 class ProductsListPage extends React.Component{
     
     render(){
-        const {category} =this.props.match.params;
+        const {category, sortedBy} =this.props.match.params;
         return(
             <div>
             <Header brand="Thy Boutique"
@@ -16,10 +16,10 @@ class ProductsListPage extends React.Component{
             color="white"/>
             <div style={{display: "flex", margin: "100px 50px",  marginBottom:"15px"}}>
                 <div className="filter">
-            <Menu  />
+            <Menu category={category} sortedBy={sortedBy}/>
            </div>
            <div className="listproducts">
-            <ListProducts category={category} />
+            <ListProducts category={category} sortedBy={sortedBy} />
            </div>
            </div>
            <Footer/>

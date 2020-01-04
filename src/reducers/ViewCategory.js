@@ -2,11 +2,13 @@ import { types } from '../core/constants';
 
 const initialState = {
   viewCategory: null,
-  listCategories: [{ name: "Áo kiểu", amount: 10},
-  { name: "Áo thun", amount: 9},
-  { name: "Đầm", amount: 2},
-  { name: "Váy", amount: 15},
-  { name: "Quần", amount: 18}]
+  listCategories: [
+  { name: "Áo", amount: 3},
+  { name: "Đầm", amount: 3},
+  { name: "Váy", amount: 3},
+  { name: "Quần", amount: 2},
+{ name: "Jumpsuit", amount: 1},
+{ name: "Túi xách", amount: 0}]
 };
 export default function viewCategory(state = initialState, action) {
   switch (action.type) {
